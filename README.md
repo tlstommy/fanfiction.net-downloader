@@ -1,2 +1,2 @@
 # fanfiction.net-downloader
-download fanfiction.net stuff for emma
+Program to download fanfiction.net stuff for my sister
