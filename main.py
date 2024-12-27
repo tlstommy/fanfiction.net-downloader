@@ -1,5 +1,5 @@
 
-import os,subprocess
+import os,subprocess,sys
 from time import sleep
 
 import shutil
@@ -35,7 +35,7 @@ class Downloader:
     #download one story
     def download(self, url, format):
         subprocess.run(['fichub_cli', '-o', OUTPUT_DIR, '-u', url, '--format',format], check=True)
-        print(f'Story downloaded to {OUTPUT_DIR}')
+        print(f'Story downloaded to {OUTPUT_DIR} directory.')
 
 
     #bulk download from infile
@@ -43,7 +43,7 @@ class Downloader:
 
         command_str = ''
 
-        with open(os.path.join(INPUT_DIR,file), 'r') as in_file:
+        with open(file, 'r') as in_file:
             
             lines = [line.strip() for line in in_file.readlines()]
             
@@ -51,16 +51,20 @@ class Downloader:
                 lines.pop(0)
             
         
-
+        #list of files
         for line in lines:
             command_str += line + ','
         command_str = command_str.removesuffix(',')
 
     
-        print(command_str)
-        return
-        subprocess.run(['fichub_cli', '-o', OUTPUT_DIR, '-l', fileList, '--format',format], check=True)
-        print(f'Story downloaded to {OUTPUT_DIR}')
+        #print(command_str)
+        print('Downloading stories...')
+        
+        #return
+        subprocess.run(['fichub_cli', '-o', OUTPUT_DIR, '-l', command_str, '--format',format], check=True)
+        print(f'Stories downloaded to {OUTPUT_DIR} directory')
+        
+        sleep(3)
         return
     
     def menu_settings(self):
@@ -76,7 +80,8 @@ class Downloader:
             if(user_input == '1'):
                 
 
-                self.menu_single_download()
+                print('To change the default download format, edit the line in "main.py" : DOWNLOAD_FORMAT = "[format]"\nreplace [format] in quotations with an appropriate extension type like EPUB/PDF')
+                sleep(10)
             elif(user_input == '2'):
                 while True:
                     print(f'\nYou entered: Rebuild Input/Output directories \n')
@@ -107,6 +112,8 @@ class Downloader:
                         return
             elif(user_input == '3'):
                 return
+            elif(user_input.lower() == 'quit'):
+                sys.exit()
             
             else: 
                 print('Error! Invalid choice!')
@@ -132,8 +139,10 @@ class Downloader:
             url = input('Enter the URL to the story\nURL: ').strip()
             
             if(url.lower() == 'menu'):
-                return()
+                return
             
+            elif(url.lower() == 'quit'):
+                sys.exit()
             
             #confirm it
             while True:
@@ -198,11 +207,15 @@ class Downloader:
                     uinput = input("Press Enter to start downloading.\nCommand: ").strip().lower()
                     if uinput == 'menu':
                         return
+                    elif(uinput.lower() == 'quit'):
+                        sys.exit()
                     else:
-                        self.download_from_file(os.path.join(INPUT_DIR,infile))
+                        self.download_from_file(os.path.join(INPUT_DIR,infile),DOWNLOAD_FORMAT)
                         return()
+            elif(uinput.lower() == 'quit'):
+                sys.exit()
             else:
-                self.download_from_file(os.path.join(INPUT_DIR,'infile.txt'))
+                self.download_from_file(os.path.join(INPUT_DIR,'infile.txt'),DOWNLOAD_FORMAT)
 
     def menu(self):
         while True:
@@ -217,7 +230,7 @@ class Downloader:
             print('║ [4] - Quit                                      ║')
             print('╚═════════════════════════════════════════════════╝')
 
-            user_input = input('Please select an option (1-4). \nSelection: ').strip()
+            user_input = input('Please select an option (1-4). \nEnter "Quit" anytime to quit.\nSelection: ').strip()
             if(user_input == '1'):
                 
 
@@ -228,13 +241,23 @@ class Downloader:
                 self.menu_settings()
             elif(user_input == '4'):
                 return
+            elif(user_input.lower() == 'quit'):
+                sys.exit()
             else: 
                 print('Error! Invalid choice!')
                  
                 
             
-            
-
+os.system('cls||clear')
+print('╔═════════════════════════════════════════════════╗')
+print('║            Fanfiction.net downloader            ║')
+print('╟─────────────────────────────────────────────────╢')
+print('║             Written by Tommy Smith              ║')
+print('║                                                 ║')
+print('║           https://github.com/tlstommy           ║')
+print('║                                                 ║')
+print('╚═════════════════════════════════════════════════╝\n')            
+sleep(2)
 
 downloader = Downloader()
 
